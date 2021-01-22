@@ -24,7 +24,7 @@ bool coordinate::evaluation(coordinate where)
     if (this->m_x == where.m_x && this->m_y == where.m_y)
         return true;
     else
-        false;
+        return false;
 }
 
 class route : public coordinate
@@ -36,7 +36,9 @@ private:
 
 public:
     void place(coordinate &where, route line);
+    void judge(coordinate where, direction dir);
     void evaluation(coordinate where, direction dir);
+    void dir(direction &dir, route line);
     void show(route line);
 };
 ostream &operator<<(ostream &cout, route &line);
@@ -47,30 +49,42 @@ void route::place(coordinate &where, route line)
     where.m_y = line.m_y;
 }
 //改变方向后，方向与位置赋值
-void route::evaluation(coordinate where, direction dir)
+void route::judge(coordinate where, direction dir)
 {
     this->m_dir = dir;
     switch (dir)
     {
     case right:
-        this->m_x = where.m_x + 1;
-        this->m_y = where.m_y;
-        break;
-    case down:
         this->m_x = where.m_x;
         this->m_y = where.m_y + 1;
         break;
-    case left:
-        this->m_x = where.m_x - 1;
+    case down:
+        this->m_x = where.m_x + 1;
         this->m_y = where.m_y;
         break;
-    case up:
+    case left:
         this->m_x = where.m_x;
         this->m_y = where.m_y - 1;
+        break;
+    case up:
+        this->m_x = where.m_x - 1;
+        this->m_y = where.m_y;
         break;
     default:
         break;
     }
+}
+//坐标及将要进行的方向
+void route::evaluation(coordinate where, direction dir)
+{
+    this->m_dir = dir;
+    this->m_x = where.m_x;
+    this->m_y = where.m_y;
+}
+//出栈后确定方向
+void route::dir(direction &dir, route line)
+{
+    dir = line.m_dir;
 }
 //输出位置与方向
 void route::show(route line)

@@ -36,30 +36,30 @@ int main()
     cout << "请输入迷宫的终点位置" << endl;
     cin >> whereend;
     //出发
-    route line;
-    direction dir = -1;               //定义方向
-    line.evaluation(wherestart, dir); //初始位置与方向，-1代表还未走
+    route line1;
+    direction dir = -1;                //定义方向
+    line1.evaluation(wherestart, dir); //坐标及将要进行的方向
+    array[line1.m_x][line1.m_y] = -1;  //表示访问过
     sqstack s;
     s.initstack();          //初始化栈
-    s.push(line);           //初始位置入栈
+    s.push(line1);          //初始位置入栈
     while (!s.stackempty()) //栈空判断
     {
-        s.pop(line); //出栈
+        s.pop(line1); //出栈
         coordinate where;
-        line.place(where, line); //确定现在位置
-        dir++;                   //改变方向
+        line1.place(where, line1); //确定现在位置
+        line1.dir(dir, line1);
         while (dir < 4)
         {
-            line.evaluation(where, dir); //改变方向赋值
-            // cout << where.m_x << endl;
-            // cout << where.m_y << endl;
-            int i = line.m_x;
-            int j = line.m_y;
-            if (array[i][j] == 0)
+            dir++; //改变方向
+            line1.evaluation(where, dir);
+            route line2; //line1的下一步
+            line2.judge(where, dir);
+            if (array[line2.m_x][line2.m_y] == 0) //可以走
             {
-                s.push(line);                   //压栈
-                line.place(where, line);        //确定位置
-                array[line.m_x][line.m_y] = -1; //表示访问过
+                array[line2.m_x][line2.m_y] = -1; //表示访问过
+                s.push(line1);                    //压栈
+                line2.place(where, line2);        //确定新位，判断新位置，是否到终点，没有的话进行下一次位置方向判断
                 if (where.evaluation(whereend))
                 {
                     /*---------------输出栈-------------*/
@@ -67,21 +67,19 @@ int main()
                     end.initstack();
                     while (!s.stackempty())
                     {
-                        s.pop(line);
-                        end.push(line);
+                        s.pop(line1);
+                        end.push(line1);
                     }
                     while (!end.stackempty())
                     {
-                        end.pop(line);
-                        line.show(line);
+                        end.pop(line1);
+                        line1.show(line1);
                     }
                     return 0;
                 }
                 else
-                    dir = 0; //到达新位置，初始右转
+                    dir = -1; //到达新位置
             }
-            else
-                dir++; //没到达新位置，换方向
         }
     }
 }
